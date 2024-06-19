@@ -48,14 +48,31 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
-  test("Constructor Initialization", () => {
-    const billsInstance = new Bills({
-      document: document,
-      onNavigate: jest.fn(),
-      store: MokedStore,
-    });
-    expect(billsInstance.document).toBe(document);
-    expect(billsInstance.onNavigate).toBeDefined();
-    expect(billsInstance.store).toBe(MokedStore);
+  test("Then clicking on 'New Bill button should navigate to the NewBill page'", async () => {
+    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({
+        type: "Employee",
+      })
+    );
+
+    const root = document.createElement("div");
+    root.setAttribute("id", "root");
+    document.body.appendChild(root);
+
+    router();
+    await window.onNavigate(ROUTES_PATH.Bills);
+
+    await waitFor(() => screen.getByTestId("btn-new-bill"));
+
+    const buttonNewBill = screen.getByTestId("btn-new-bill");
+    await buttonNewBill.dispatchEvent(new MouseEvent("click"));
+
+    const newBillUrl = window.location.href.replace(
+      /^https?:\/\/localhost\//,
+      ""
+    );
+    expect(newBillUrl).toBe("#employee/bill/new");
   });
 });
