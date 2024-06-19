@@ -47,4 +47,15 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted);
     });
   });
+
+  test("Constructor Initialization", () => {
+    const billsInstance = new Bills({
+      document: document,
+      onNavigate: jest.fn(),
+      store: MokedStore,
+    });
+    expect(billsInstance.document).toBe(document);
+    expect(billsInstance.onNavigate).toBeDefined();
+    expect(billsInstance.store).toBe(MokedStore);
+  });
 });
