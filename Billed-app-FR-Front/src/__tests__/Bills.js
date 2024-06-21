@@ -75,4 +75,22 @@ describe("Given I am connected as an employee", () => {
     );
     expect(newBillUrl).toBe("#employee/bill/new");
   });
+
+  test("handleClickIconEye shows modal", () => {
+    const billsInstance = new Bills({
+      document: document,
+      onNavigate: jest.fn(),
+      store: MokedStore,
+    });
+    const mockIcon = document.createElement("div");
+    mockIcon.setAttribute("data-bill-url", "mockBillUrl");
+
+    // Mock the modal function directly on the prototype of window.$
+    window.$.fn.modal = jest.fn();
+
+    billsInstance.handleClickIconEye(mockIcon);
+
+    // Checking if the modal function was called with the expected parameters
+    expect(window.$.fn.modal).toHaveBeenCalledWith("show");
+  });
 });
