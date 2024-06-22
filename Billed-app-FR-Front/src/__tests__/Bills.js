@@ -93,4 +93,66 @@ describe("Given I am connected as an employee", () => {
     // Checking if the modal function was called with the expected parameters
     expect(window.$.fn.modal).toHaveBeenCalledWith("show");
   });
+
+  test("GET Bills successfully retrieves bills from the mock store", async () => {
+    const mockStore = {
+      bills: jest.fn(() => ({
+        list: jest.fn(() =>
+          Promise.resolve([
+            {
+              id: "47qAXb6fIm2zOKkLzMro",
+              vat: "80",
+              fileUrl:
+                "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
+              status: "pending",
+              type: "Hôtel et logement",
+              commentary: "séminaire billed",
+              name: "encore",
+              fileName: "preview-facture-free-201801-pdf-1.jpg",
+              date: "2004-04-04",
+              amount: 400,
+              commentAdmin: "ok",
+              email: "a@a",
+              pct: 20,
+            },
+            {
+              id: "BeKy5Mo4jkmdfPGYpTxZ",
+              vat: "",
+              amount: 100,
+              name: "test1",
+              fileName: "1592770761.jpeg",
+              commentary: "plop",
+              pct: 20,
+              type: "Transports",
+              email: "a@a",
+              fileUrl:
+                "https://test.storage.tld/v0/b/billable-677b6.a…61.jpeg?alt=media&token=7685cd61-c112-42bc-9929-8a799bb82d8b",
+              date: "2001-01-01",
+              status: "refused",
+              commentAdmin: "en fait non",
+            },
+          ])
+        ),
+      })),
+    };
+
+    const billsComponent = new Bills({
+      document,
+      onNavigate,
+      store: mockStore,
+    });
+    const getBillsPromise = billsComponent.getBills();
+
+    await getBillsPromise;
+
+    // Verify that the mock store was called to retrieve bills
+    expect(mockStore.bills).toHaveBeenCalledTimes(1);
+
+    // Access the bills directly from the mock store after the promise resolves
+    const billsFromStore = await mockStore.bills().list();
+
+    // Verify that the "getBills" method returned an array of bills
+    expect(billsFromStore).toBeTruthy();
+    expect(billsFromStore.length).toBe(2);
+  });
 });
